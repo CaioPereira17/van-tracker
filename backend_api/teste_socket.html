@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Teste Van Tracker</title></head>
+<body>
+    <h2>Simulador de WebSockets</h2>
+    <button onclick="simularMotorista()">🚚 Simular Motorista (Enviar GPS)</button>
+    <div id="log" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:3000');
+        const logDiv = document.getElementById('log');
+
+        // Escuta atualizações do servidor (Passageiro)
+        socket.on('van_location_updated', (data) => {
+            logDiv.innerHTML += `<p>📡 Recebido: Van ${data.van_id} está em [${data.lat}, ${data.lng}]</p>`;
+        });
+
+        // Simula o motorista enviando dados
+        function simularMotorista() {
+            const dados = {
+                van_id: 'van_01',
+                lat: -23.55 + (Math.random() * 0.01), // Gera coord aleatória
+                lng: -46.63 + (Math.random() * 0.01)
+            };
+            socket.emit('update_location', dados);
+            console.log('Enviado:', dados);
+        }
+    </script>
+</body>
+</html>
